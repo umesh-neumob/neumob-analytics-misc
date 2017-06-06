@@ -1,0 +1,145 @@
+curl -XPUT https://username:password@host:port/_template/template_init -d '
+{
+   "settings":{
+      "index.requests.cache.enable": true,   
+      "index.codec":"best_compression",
+      "index.refresh_interval":"60s",
+      "number_of_shards" :   1,
+      "number_of_replicas" : 0
+   },
+   "template":"init_*",
+   "mappings":{
+      "log":{        
+         "_source":{
+            "enabled":true
+         },
+         "_all":{
+            "enabled":false
+         },
+         "dynamic_templates":[
+            {
+               "base":{
+                  "mapping":{
+                     "type":"keyword"
+                  },
+                  "match":"*",
+                  "match_mapping_type":"string"
+               }
+            }
+         ],
+         "properties":{
+            "exceptions":{
+               "type":"nested"
+            },
+            "receivedbyconsumer":{
+               "format":"epoch_millis",
+               "type":"date"
+            },
+            "receivedbylogger":{
+               "format":"epoch_millis",
+               "type":"date"
+            },
+            "timestamp":{
+               "format":"epoch_second",
+               "type":"date"
+            }
+         }
+      }
+   }
+}'
+
+
+curl -XPUT https://username:password@host:port/_template/template_client -d '
+{
+   "settings":{
+      "index.requests.cache.enable": true,
+      "index.codec":"best_compression",
+      "index.refresh_interval":"60s",
+      "number_of_shards" :   4,
+      "number_of_replicas" : 0
+   },
+   "template":"client_*",
+   "mappings":{
+      "log":{
+         "_source":{
+            "enabled":true
+         },
+         "_all":{
+            "enabled":false
+         },
+         "dynamic_templates":[
+            {
+               "base":{
+                  "mapping":{
+                     "type":"keyword"
+                  },
+                  "match":"*",
+                  "match_mapping_type":"string"
+               }
+            }
+         ],
+         "properties":{
+            "is_fast":{
+               "type":"boolean"
+            },
+            "method":{
+               "type":"byte"
+            },
+            "receivedbyconsumer":{
+               "format":"epoch_millis",
+               "type":"date"
+            },
+            "receivedbylogger":{
+               "format":"epoch_millis",
+               "type":"date"
+            },
+            "timestamp":{
+               "format":"epoch_second",
+               "type":"date"
+            }
+         }
+      }
+   }
+}'
+
+curl -XPUT https://username:password@host:port/_template/template_perfmon -d '
+{
+  "settings":{
+     "index.requests.cache.enable": true,
+     "index.codec":"best_compression",
+     "index.refresh_interval":"60s",
+     "number_of_shards" :   1,
+     "number_of_replicas" : 0
+  },
+  "template":"perfmon_*",
+  "mappings":{
+     "log":{
+        "_source":{
+           "enabled":true
+        },
+        "_all":{
+           "enabled":false
+        },
+        "dynamic_templates":[
+           {
+              "base":{
+                 "mapping":{
+                    "type":"keyword"
+                 },
+                 "match":"*",
+                 "match_mapping_type":"string"
+              }
+           }
+        ],
+        "properties":{
+           "method":{
+              "type":"byte"
+           },
+           "timestamp":{
+              "format":"epoch_second",
+              "type":"date"
+           }
+        }
+     }
+  }
+}'
