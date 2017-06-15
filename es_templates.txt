@@ -1,3 +1,56 @@
+curl -XPUT https://username:password@host:port/_template/template_proxy -d '
+{
+   "settings":{
+      "index.requests.cache.enable": true,
+      "index.codec":"best_compression",
+      "index.refresh_interval":"60s",
+      "number_of_shards" :   4,
+      "number_of_replicas" : 0
+   },
+   "template":"proxy_*",
+   "mappings":{
+      "log":{        
+         "_source":{
+            "enabled":true
+         },
+         "_all":{
+            "enabled":false
+         },
+         "dynamic_templates":[
+            {
+               "base":{
+                  "mapping":{
+                     "type":"keyword"
+                  },
+                  "match":"*",
+                  "match_mapping_type":"string"
+               }
+            }
+         ],
+         "properties":{
+            "method":{
+               "type":"string"
+            },
+            "txntotal":{
+               "type":"long"
+            },
+            "receivedbyconsumer":{
+               "format":"epoch_millis",
+               "type":"date"
+            },
+            "receivedbylogger":{
+               "format":"epoch_millis",
+               "type":"date"
+            },
+            "timestamp":{
+               "format":"epoch_second",
+               "type":"date"
+            }
+         }
+      }
+   }
+}'
+
 curl -XPUT https://username:password@host:port/_template/template_init -d '
 {
    "settings":{
